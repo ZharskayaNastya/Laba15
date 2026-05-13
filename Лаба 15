@@ -1,0 +1,41 @@
+import java.io.FileWriter;
+import java.util.regex.*;
+import java.io.File;
+import java.io.IOException;
+public class Main {
+    public static void main(String[] args) {
+        File newfile = new File("My IP.txt");
+        try {
+            boolean created = newfile.createNewFile();
+            if (created) {
+                System.out.println("File has been created");
+            } else {
+                System.out.println("File already exists");
+            }
+        } catch (IOException ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        System.out.println("File name: " + newfile.getName());
+        String txt = "Найдите верный IP адрес : 34.56.78.89, 123.23.63.67, 122.122.122.122, 256.1.1.1, 789.34.234.123, 54.65.67.123, 267.80.56.23";
+        String reg = "\\b((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\b";
+        Pattern p = Pattern.compile(reg);
+        Matcher m = p.matcher(txt);
+        System.out.println("Корректные IP адреса:");
+        try (FileWriter fw = new FileWriter(newfile)) {
+            fw.write("Верные IP адреса:\n");
+            int count = 0;
+            while (m.find()) {
+                String ip = m.group();
+                System.out.println(ip);
+                fw.write(ip + "\n");
+                count++;
+            }
+            if (count == 0) {
+                System.out.println("Не найдено");
+                fw.write("Верных IP адресов не найдено");
+            }
+        } catch (IOException ex) {
+            System.out.println("Ошибка записи: " + ex.getMessage());
+        }
+    }
+}
